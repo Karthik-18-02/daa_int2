@@ -1,33 +1,42 @@
 import heapq
+from typing import List
+
+class Solution:
+    def dijkstra(self, V: int, adj: List[List[List[int]]], S: int) -> List[int]:
+        # min-heap priority queue
+        pq = []
+        heapq.heappush(pq, (0, S))
+
+        short_dis = [float('inf')] * V
+        short_dis[S] = 0
+
+        while pq:
+
+            dis, node = heapq.heappop(pq)
+
+            for i in adj[node]:
+
+                adjNode, edgeWt = i[0], i[1]
+
+                if dis + edgeWt < short_dis[adjNode]:
+                    short_dis[adjNode] = dis + edgeWt
+                    heapq.heappush(pq, (short_dis[adjNode], adjNode))
+        
+        return short_dis
 
 
-def dijkstra(graph, start):
-    # Initialize distances with infinity and set the distance to the start node as 0
-    distances = {node: float('infinity') for node in graph}
-    distances[start] = 0
-    priority_queue = [(0, start)]
+# Example usage:
+# Number of vertices (V), adjacency list (adj), and source vertex (S)
+V = 6
+adj = [
+    [[1, 4], [2, 4]],  # Adjacency list for vertex 0
+    [[0, 4], [2, 2]],           # Adjacency list for vertex 1
+    [[0, 4], [1, 2], [3, 3], [5, 6], [4, 1]],           # Adjacency list for vertex 2
+    [[2, 3], [5, 2]],           # Adjacency list for vertex 3
+    [[2, 1], [5, 3]],
+    [[3, 2], [2, 6], [4, 3]],
+]
+S = 0
 
-    while priority_queue:
-        current_distance, current_node = heapq.heappop(priority_queue)
-
-        # Skip if the current distance is not better than the already known distance
-        if current_distance > distances[current_node]:
-            continue
-
-        for neighbor, weight in graph[current_node]:
-            distance = current_distance + weight
-            if distance < distances[neighbor]:
-                distances[neighbor] = distance
-                heapq.heappush(priority_queue, (distance, neighbor))
-
-    return distances
-
-
-# Example usage
-graph = {
-    'A': [('B', 1), ('C', 4)],
-    'B': [('A', 1), ('C', 2), ('D', 5)],
-    'C': [('A', 4), ('B', 2), ('D', 1)],
-    'D': [('B', 5), ('C', 1)]
-}
-print(dijkstra(graph, 'A'))
+solution = Solution()
+print(solution.dijkstra(V, adj, S))
