@@ -1,41 +1,36 @@
-class BellmanFord:
-    def __init__(self, vertices):
-        self.V = vertices
-        self.edges = []
+class Solution:
+    
+    def bellman(self, V, adj, S):
 
-    def add_edge(self, u, v, weight):
-        self.edges.append((u, v, weight))
+        short_dist = V * [float('inf')]
+        short_dist[S] = 0
 
-    def bellman_ford(self, src):
-        # Initialize distances with infinity and set the distance to the source node as 0
-        dist = [float('inf')] * self.V
-        dist[src] = 0
+        for _ in range(V-1):
+            for i in adj:
+                u, v, wt = i
+                if short_dist[u] + wt < short_dist[v] and short_dist[u] != float('inf'):
+                    short_dist[v] = short_dist[u] + wt
 
-        # Relax all edges V-1 times
-        for _ in range(self.V - 1):
-            for u, v, weight in self.edges:
-                if dist[u] != float('inf') and dist[u] + weight < dist[v]:
-                    dist[v] = dist[u] + weight
+        for i in adj:
+            u, v, wt = i
+            if short_dist[u] + wt < short_dist[v] and short_dist[u] != float('inf'):
+                return [-1]
+            
+        return short_dist
+                
 
-        # Check for negative-weight cycles
-        for u, v, weight in self.edges:
-            if dist[u] != float('inf') and dist[u] + weight < dist[v]:
-                print("Graph contains a negative-weight cycle")
-                return None
+V = 5
+edges = [
+    [0, 1, -1],  # Edge from vertex 0 to 1 with weight -1
+    [0, 2, 4],   # Edge from vertex 0 to 2 with weight 4
+    [1, 2, 3],   # Edge from vertex 1 to 2 with weight 3
+    [1, 3, 2],   # Edge from vertex 1 to 3 with weight 2
+    [1, 4, 2],   # Edge from vertex 1 to 4 with weight 2
+    [3, 2, 5],   # Edge from vertex 3 to 2 with weight 5
+    [3, 1, 1],   # Edge from vertex 3 to 1 with weight 1
+    [4, 3, -3]   # Edge from vertex 4 to 3 with weight -3
+]
+S = 0
 
-        return dist
-
-# Example usage
-bf_graph = BellmanFord(5)
-bf_graph.add_edge(0, 1, -1)
-bf_graph.add_edge(0, 2, 4)
-bf_graph.add_edge(1, 2, 3)
-bf_graph.add_edge(1, 3, 2)
-bf_graph.add_edge(1, 4, 2)
-bf_graph.add_edge(3, 2, 5)
-bf_graph.add_edge(3, 1, 1)
-bf_graph.add_edge(4, 3, -3)
-
-result = bf_graph.bellman_ford(0)
-if result:
-    print("Shortest distances from source 0:", result)
+solution = Solution()
+print(solution.bellman(V, edges, S))

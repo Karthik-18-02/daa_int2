@@ -14,30 +14,27 @@ class Graph:
 
 
     def graph_coloring(self, max_colors):
-        # Result dictionary to store the color assigned to each vertex
-        color_result = {}
 
-        # Iterate over all vertices to assign colors
-        for vertex in self.dict:
-            # Create a set of all colors assigned to adjacent vertices
-            adjacent_colors = set()
-            for neighbor in self.dict[vertex]:
-                if neighbor in color_result:
-                    adjacent_colors.add(color_result[neighbor])
+        color_map = {}
 
-            # Find the first available color not used by adjacent vertices within the limit of max_colors
+        for i in self.dict:
+
+            color_set = set()
+
+            for j in self.dict[i]:
+                if j in color_map:
+                    color_set.add(color_map[j])
+                
             color = 1
-            while color in adjacent_colors:
+            while color in color_set:
                 color += 1
 
-            # Check if the color exceeds the allowed number of colors
             if color > max_colors:
-                return "Graph cannot be colored with the given number of colors."
+                return "impossible"
+            
+            color_map[i] = color
 
-            # Assign the chosen color to the current vertex
-            color_result[vertex] = color
-
-        return color_result
+        return color_map
 
 # Example usage
 g = Graph()
@@ -52,4 +49,4 @@ g.add_edge(4, 5)
 # Specify the maximum number of colors allowed
 max_colors = 3
 print(g.graph_coloring(max_colors))
-print(g.add_edge())
+

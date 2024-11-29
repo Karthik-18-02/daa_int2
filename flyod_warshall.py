@@ -1,35 +1,43 @@
-class FloydWarshall:
-    def __init__(self, vertices):
-        self.V = vertices
-        # Initialize the distance matrix with infinity and set diagonal elements to 0
-        self.dist = [[float('inf')] * vertices for _ in range(vertices)]
-        for i in range(vertices):
-            self.dist[i][i] = 0
+class Solution:
+    
+    def flyod_warshall(self, mat):
 
-    def add_edge(self, u, v, weight):
-        # Add an edge to the distance matrix
-        self.dist[u][v] = weight
+        n = len(mat)
 
-    def floyd_warshall(self):
-        # Perform the Floyd-Warshall algorithm
-        for k in range(self.V):
-            for i in range(self.V):
-                for j in range(self.V):
-                    if self.dist[i][k] != float('inf') and self.dist[k][j] != float('inf') and \
-                       self.dist[i][k] + self.dist[k][j] < self.dist[i][j]:
-                        self.dist[i][j] = self.dist[i][k] + self.dist[k][j]
-        return self.dist
+        for i in range(n):
+            for j in range(n):
+                if mat[i][j] == -1:
+                    mat[i][j] = float('inf')
+                if i == j:
+                    mat[i][j] = 0
+        
+        for via in range(n):
+            for i in range(n):
+                for j in range(n):
+                    if mat[i][via] != float('inf') and mat[via][j] != float('inf'):
+                        mat[i][j] = min(mat[i][j], mat[i][via] + mat[via][j])
+        
+        for i in range(n):
+            for j in range(n):
+                if mat[i][j] == float('inf'):
+                    mat[i][j] = -1
+        
+        for i in range(n):
+            if mat[i][i] < 0:
+                return "negative cycle found"
+        
+        return mat
 
-# Example Usage
-fw_graph = FloydWarshall(4)
-fw_graph.add_edge(0, 1, 3)
-fw_graph.add_edge(0, 2, 5)
-fw_graph.add_edge(1, 2, 2)
-fw_graph.add_edge(1, 3, -2)
-fw_graph.add_edge(2, 3, 1)
-fw_graph.add_edge(3, 0, 2)
 
-result = fw_graph.floyd_warshall()
-print("All pairs shortest paths:")
-for row in result:
-    print(row)
+# Example usage
+matrix = [
+    [0, 3, -1, 7],
+    [-1, 0, 2, -1],
+    [-1, -1, 0, 1],
+    [6, -1, -1, 0]
+]
+
+print(matrix)
+solution = Solution()
+result = solution.flyod_warshall(matrix)
+print(result)
